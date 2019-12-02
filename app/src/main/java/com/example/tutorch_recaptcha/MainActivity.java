@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String SAFETY_NET_API_SITE_KEY = "6Lc6kMUUAAAAALR-7eWbh0VYVTpTXNWAQPLG9Lw-";
 
     // TODO - replace the SERVER URL with yours
-    private static final String URL_VERIFY_ON_SERVER = "https://api.androidhive.info/google-recaptcha-verfication.php";
+    private static final String URL_VERIFY_ON_SERVER = "https://api.tutorch.com/google-recaptcha-verfication.php";
 
     @BindView(R.id.input_feedback)
     EditText inputFeedback;
@@ -76,30 +76,24 @@ public class MainActivity extends AppCompatActivity {
 
         // Showing reCAPTCHA dialog
         SafetyNet.getClient(this).verifyWithRecaptcha(SAFETY_NET_API_SITE_KEY)
-                .addOnSuccessListener(this, new OnSuccessListener<SafetyNetApi.RecaptchaTokenResponse>() {
-                    @Override
-                    public void onSuccess(SafetyNetApi.RecaptchaTokenResponse response) {
-                        Log.d(TAG, "onSuccess");
+                .addOnSuccessListener(this, response -> {
+                    Log.d(TAG, "onSuccess");
 
-                        if (!response.getTokenResult().isEmpty()) {
+                    if (!response.getTokenResult().isEmpty()) {
 
-                            // Received captcha token
-                            // This token still needs to be validated on the server
-                            // using the SECRET key
-                            verifyTokenOnServer(response.getTokenResult());
-                        }
+                        // Received captcha token
+                        // This token still needs to be validated on the server
+                        // using the SECRET key
+                        verifyTokenOnServer(response.getTokenResult());
                     }
                 })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        if (e instanceof ApiException) {
-                            ApiException apiException = (ApiException) e;
-                            Log.e(TAG, "Error message hello: " +
-                                    CommonStatusCodes.getStatusCodeString(apiException.getStatusCode()));
-                        } else {
-                            Log.e(TAG, "Unknown type of error: " + e.getMessage());
-                        }
+                .addOnFailureListener(this, e -> {
+                    if (e instanceof ApiException) {
+                        ApiException apiException = (ApiException) e;
+                        Log.e(TAG, "Error message hello: " +
+                                CommonStatusCodes.getStatusCodeString(apiException.getStatusCode()));
+                    } else {
+                        Log.e(TAG, "Unknown type of error: " + e.getMessage());
                     }
                 });
     }
